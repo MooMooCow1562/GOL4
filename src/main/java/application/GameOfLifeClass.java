@@ -20,7 +20,7 @@ public class GameOfLifeClass {
 	 * @param rnd
 	 * sets the game's java.util.random
 	 */
-	@SuppressWarnings({}) //may use this in the future, idk, don't wanna get rid of it now.
+	@SuppressWarnings("unused") //may use this in the future, idk, don't wanna get rid of it now.
 	public void setRnd(Random rnd) {
 		this.rnd = rnd;
 	}
@@ -38,7 +38,7 @@ public class GameOfLifeClass {
 	/**
 	 * @return returns the size of the gameboard.
 	 */
-	@SuppressWarnings({}) //may use this in the future, idk, don't wanna get rid of it now.
+	@SuppressWarnings("unused") //may use this in the future, idk, don't wanna get rid of it now.
 	public int getBoardSize() {
 		return boardSize;
 	}
