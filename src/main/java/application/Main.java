@@ -24,7 +24,7 @@ public class Main extends Application {
 	boolean showPriorLiving;
 	Button eStop;
 	FixOverFlows fix;
-	Timeline scheduled = new Timeline(new KeyFrame(Duration.seconds(0.1), ev -> {
+	Timeline scheduled = new Timeline(new KeyFrame(Duration.seconds(0.1), _ -> {
 		game.RunOneGen(showPriorLiving);
 		makeBoard(game.GetCurrentBoard());
 	}));
@@ -120,6 +120,7 @@ public class Main extends Application {
 
 	/**
 	 * @param resetButtonPressed
+	 * resets the board.
 	 */
 	private void resetBoard(ActionEvent resetButtonPressed) {
 		eStopProcessor(null);
@@ -129,15 +130,17 @@ public class Main extends Application {
 	}
 
 	/**
-	 * @param buttonEvent
+	 * @param randomBoardButton
+	 * Generates a random board.
 	 */
-	private void generateRandomBoard(ActionEvent buttonEvent) {
+	private void generateRandomBoard(ActionEvent randomBoardButton) {
 		int[][] temp = game.GenerateBoard();
 		makeBoard(temp);
 	}
 
 	/**
 	 * @param toggleEvent
+	 * toggles the ghost cells.
 	 */
 	private void togglePriorLiving(ActionEvent toggleEvent) {
 		if (showPriorLiving) {
@@ -150,24 +153,27 @@ public class Main extends Application {
 	}
 
 	/**
-	 * @param buttonEvent
+	 * @param changeSeedButtonEvent
+	 * changes the seed.
 	 */
-	private void changeSeed(ActionEvent buttonEvent) {
+	private void changeSeed(ActionEvent changeSeedButtonEvent) {
 		game.getRnd().setSeed(Long.parseLong(seedHolder.getText()));
 	}
 
 	/**
-	 * @param buttonEvent
+	 * @param runButtonPressed
+	 * proceeds one game state.
 	 */
-	private void runOneGenPlease(ActionEvent buttonEvent) {
+	private void runOneGenPlease(ActionEvent runButtonPressed) {
 		game.RunOneGen(showPriorLiving);
 		makeBoard(game.GetCurrentBoard());
 	}
 
 	/**
-	 * @param buttonEvent
+	 * @param runButtonPressed
+	 * proceeds 100 game states
 	 */
-	private void runOneHundredGenPlease(ActionEvent buttonEvent) {
+	private void runOneHundredGenPlease(ActionEvent runButtonPressed) {
 		scheduled.setCycleCount(100);
 		scheduled.play();
 		eStop.setOnAction(this::eStopProcessor);
@@ -177,9 +183,10 @@ public class Main extends Application {
 	}
 
 	/**
-	 * @param buttonEvent
+	 * @param runButtonPressed
+	 * runs as many game states as directed to.
 	 */
-	private void runCustomGenPlease(ActionEvent buttonEvent) {
+	private void runCustomGenPlease(ActionEvent runButtonPressed) {
 		scheduled.setCycleCount(Integer.parseInt(customGenRuns.getText()));
 		scheduled.play();
 		eStop.setOnAction(this::eStopProcessor);
@@ -190,6 +197,7 @@ public class Main extends Application {
 
 	/**
 	 * @param estopEvent
+	 * stops the game from running.
 	 */
 	private void eStopProcessor(ActionEvent estopEvent) {
 		eStop.setCursor(Cursor.DEFAULT);
@@ -200,6 +208,7 @@ public class Main extends Application {
 
 	/**
 	 * @param click
+	 * changes the color of a lifecell.
 	 */
 	private void changeColor(MouseEvent click) {
 		Pane lifeCell = (Pane) click.getSource();
@@ -259,6 +268,7 @@ public class Main extends Application {
 
 	/**
 	 * @param temporaryBoard
+	 * creates the next board.
 	 */
 	private void makeBoard(int[][] temporaryBoard) {
 		leftPane = new GridPane();
