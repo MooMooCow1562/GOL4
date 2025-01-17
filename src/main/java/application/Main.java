@@ -45,7 +45,6 @@ public class Main extends Application {
 			game = new GameOfLifeClass();
 
 			// setting sizes for the two grid elements
-			rightPane.setId("#rightPane");
 			rightPane.setMinSize(500, 480);
 			rightPane.setMaxSize(500, 480);
 			((FlowPane) rightPane).setOrientation(Orientation.VERTICAL);
