@@ -51,7 +51,7 @@ public class Main extends Application {
 			leftPane.setMinSize(500, 480);
 			leftPane.setMaxSize(500, 480);
 
-			// rightside gui
+			// right-side gui
 			// seed setter
 			Button setSeed = new Button("Set new Seed");
 			seedHolder = new TextField();
@@ -81,7 +81,7 @@ public class Main extends Application {
 			ToggleButton PriorLivingToggle = new ToggleButton("Activate Ghosts");
 			PriorLivingToggle.setSelected(true);
 			PriorLivingToggle.setOnAction(this::togglePriorLiving);
-			// Estop button
+			// Emergency stop button
 			eStop = new Button("Emergency Stop");
 			eStop.setBackground(Background.fill(Color.BLACK));
 			// board reset button
@@ -196,10 +196,10 @@ public class Main extends Application {
 	}
 
 	/**
-	 * @param estopEvent
+	 * @param eStopEvent
 	 * stops the game from running.
 	 */
-	private void eStopProcessor(ActionEvent estopEvent) {
+	private void eStopProcessor(ActionEvent eStopEvent) {
 		eStop.setCursor(Cursor.DEFAULT);
 		scheduled.stop();
 		eStop.setOnAction(null);

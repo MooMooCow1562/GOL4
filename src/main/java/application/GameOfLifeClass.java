@@ -20,7 +20,7 @@ public class GameOfLifeClass {
 	 * @param rnd
 	 * sets the game's java.util.random
 	 */
-	@SuppressWarnings("unused") //may use this in the future, idk, don't wanna get rid of it now.
+	@SuppressWarnings("unused") //may use this in the future, IDK, don't want to get rid of it now.
 	public void setRnd(Random rnd) {
 		this.rnd = rnd;
 	}
@@ -36,9 +36,9 @@ public class GameOfLifeClass {
 	}
 
 	/**
-	 * @return returns the size of the gameboard.
+	 * @return returns the size of the game-board.
 	 */
-	@SuppressWarnings("unused") //may use this in the future, idk, don't wanna get rid of it now.
+	@SuppressWarnings("unused") //may use this in the future, IDK, don't want to get rid of it now.
 	public int getBoardSize() {
 		return boardSize;
 	}
@@ -107,14 +107,14 @@ public class GameOfLifeClass {
 	 * returns whether the cell is Alive, Dead, or a Ghost.
 	 */
 	private int FindNextDying(int cellState, int col, int row) {
-		int numOfAdjacents = CheckNearCells(col, row);
-		if ((numOfAdjacents < 2 || numOfAdjacents > 3) && cellState != 0) {
+		int numOfAdjacent = CheckNearCells(col, row);
+		if ((numOfAdjacent < 2 || numOfAdjacent > 3) && cellState != 0) {
 			return cellState - 1;
 		}
-		if (numOfAdjacents == 3) {
+		if (numOfAdjacent == 3) {
 			return 2;
 		}
-		if (numOfAdjacents == 2 && cellState == 1) {
+		if (numOfAdjacent == 2 && cellState == 1) {
 			return 0;
 		}
 		return cellState;
@@ -131,11 +131,11 @@ public class GameOfLifeClass {
 	 * returns whether the cell is alive or dead.
 	 */
 	private int FindNextState(int cellState, int col, int row) {
-		int numOfAdjacents = CheckNearCells(col, row);
-		if (numOfAdjacents < 2 || numOfAdjacents > 3) {
+		int numOfAdjacent = CheckNearCells(col, row);
+		if (numOfAdjacent < 2 || numOfAdjacent > 3) {
 			return 0;
 		}
-		if (numOfAdjacents == 3) {
+		if (numOfAdjacent == 3) {
 			return 2;
 		}
 		if (cellState == 1) {
