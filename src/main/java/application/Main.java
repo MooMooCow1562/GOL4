@@ -45,6 +45,7 @@ public class Main extends Application {
 			game = new GameOfLifeClass();
 
 			// setting sizes for the two grid elements
+			rightPane.setId("#rightPane");
 			rightPane.setMinSize(500, 480);
 			rightPane.setMaxSize(500, 480);
 			((FlowPane) rightPane).setOrientation(Orientation.VERTICAL);
@@ -107,8 +108,6 @@ public class Main extends Application {
 			// creating the grid.
 			int[][] initialGrid = new int[75][75];
 			makeBoard(initialGrid);
-
-			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.show();
 			primaryStage.setTitle("Game Of Life GUI version 3.0 (UI update)");
