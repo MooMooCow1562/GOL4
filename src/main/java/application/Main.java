@@ -110,7 +110,7 @@ public class Main extends Application {
 			primaryStage.setScene(scene);
 			primaryStage.show();
 			primaryStage.setTitle("Game Of Life GUI version 3.0 (UI update)");
-			// prevent people from fucking with the window
+			// prevent people from messing with the window
 			primaryStage.setResizable(false);
 		} catch (Exception e) {
 			//noinspection CallToPrintStackTrace

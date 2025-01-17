@@ -4,12 +4,13 @@ import java.util.Random;
 
 public class GameOfLifeClass {
 	int[][] currentBoard;
-	private int boardSize;
+	private final int boardSize = 75;
 	private Random rnd;
-	private FixOverFlows fix;
+	private final FixOverFlows fix;
 
 	/**
 	 * @return
+	 * returns the current Java.Util.Random the game is using.
 	 */
 	public Random getRnd() {
 		return rnd;
@@ -17,33 +18,35 @@ public class GameOfLifeClass {
 
 	/**
 	 * @param rnd
+	 * sets the game's java.util.random
 	 */
+	@SuppressWarnings({}) //may use this in the future, idk, don't wanna get rid of it now.
 	public void setRnd(Random rnd) {
 		this.rnd = rnd;
 	}
 
 	/**
-	 * Nonparaterized constructor, sets the board size to the default of 75*75
+	 * Non-parameterized constructor, initializes the game and sets the board size to the default of 75*75
 	 */
 	public GameOfLifeClass() {
 		super();
 		fix = new FixOverFlows();
-		boardSize = 75;
 		currentBoard = new int[boardSize][boardSize];
 		rnd = new Random(75);/* temporary value for development purposes */
 	}
 
 	/**
-	 * @return
+	 * @return returns the size of the gameboard.
 	 */
+	@SuppressWarnings({}) //may use this in the future, idk, don't wanna get rid of it now.
 	public int getBoardSize() {
 		return boardSize;
 	}
 
 	/**
-	 * generates a new, random board
 	 *
 	 * @return
+	 * generates a new, random board
 	 */
 	public int[][] GenerateBoard() {
 		int[][] temp = new int[boardSize][boardSize];
@@ -61,6 +64,7 @@ public class GameOfLifeClass {
 
 	/**
 	 * @return
+	 * returns the current game board
 	 */
 	public int[][] GetCurrentBoard() {
 		return currentBoard;
@@ -68,6 +72,7 @@ public class GameOfLifeClass {
 
 	/**
 	 * @param newBoard
+	 * updates the game board.
 	 */
 	public void SetCurrentBoard(int[][] newBoard) {
 		this.currentBoard = newBoard;
@@ -75,6 +80,7 @@ public class GameOfLifeClass {
 
 	/**
 	 * @param showDying
+	 * takes a boolean input, switches the logic of the run function based on the boolean input.
 	 */
 	public void RunOneGen(boolean showDying) {
 		int[][] nextBoard = new int[boardSize][boardSize];
@@ -92,9 +98,13 @@ public class GameOfLifeClass {
 
 	/**
 	 * @param cellState
+	 * the current state of the current cell
 	 * @param col
+	 * the current column position of the cell.
 	 * @param row
+	 * the current row position of the cell.
 	 * @return
+	 * returns whether the cell is Alive, Dead, or a Ghost.
 	 */
 	private int FindNextDying(int cellState, int col, int row) {
 		int numOfAdjacents = CheckNearCells(col, row);
@@ -107,17 +117,18 @@ public class GameOfLifeClass {
 		if (numOfAdjacents == 2 && cellState == 1) {
 			return 0;
 		}
-		if (cellState == 1) {
-			return cellState - 1;
-		}
 		return cellState;
 	}
 
 	/**
 	 * @param cellState
+	 * the current state of the current cell
 	 * @param col
+	 * the current column position of the cell.
 	 * @param row
+	 * * the current row position of the cell.
 	 * @return
+	 * returns whether the cell is alive or dead.
 	 */
 	private int FindNextState(int cellState, int col, int row) {
 		int numOfAdjacents = CheckNearCells(col, row);
@@ -128,15 +139,18 @@ public class GameOfLifeClass {
 			return 2;
 		}
 		if (cellState == 1) {
-			return cellState - 1;
+			return 0;
 		}
 		return cellState;
 	}
 
 	/**
 	 * @param row
+	 * takes the current row of a cell
 	 * @param col
+	 * takes the current column of a cell
 	 * @return
+	 * returns the integer number of living cells surrounding the location specified by both parameters.
 	 */
 	private int CheckNearCells(int row, int col) {
 		int count = 0;
