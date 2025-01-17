@@ -114,6 +114,7 @@ public class Main extends Application {
 			// prevent people from fucking with the window
 			primaryStage.setResizable(false);
 		} catch (Exception e) {
+			//noinspection CallToPrintStackTrace
 			e.printStackTrace();
 		}
 	}
