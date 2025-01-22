@@ -198,7 +198,7 @@ public class Main extends Application {
 
 	private void changePalette(ActionEvent actionEvent) {
 		String colorToChange;
-		colorToChange = ((ComboBox<String>) actionEvent.getSource()).getValue();
+		colorToChange = (String)((ComboBox<?>) actionEvent.getSource()).getValue();
 		if (((ComboBox<?>) actionEvent.getSource()).getId().equals("Living Cells")) {
 			LIVING_CELL.setColor(Color.valueOf(colorToChange.toUpperCase()));
 		} else if (((ComboBox<?>) actionEvent.getSource()).getId().equals("Dying Cells")) {
