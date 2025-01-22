@@ -3,7 +3,7 @@ module com.example.projec {
     requires javafx.graphics;
     requires javafx.base;
 
-    opens application to
+	opens application to
             javafx.graphics,
             javafx.fxml;
 }

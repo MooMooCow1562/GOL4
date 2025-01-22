@@ -9,7 +9,8 @@ public class FixOverFlows {
 	/**
 	 * @param broken    takes an integer
 	 * @param boardSize takes an integer
-	 * @return calls both an underflow and overflow method to completely fix an integer that is outside the range of an
+	 * @return calls both an underflow and overflow method to completely fix an integer that is
+	 * outside the range of an
 	 * array.
 	 */
 	public int FixFlow(int broken, int boardSize) {
