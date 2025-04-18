@@ -32,8 +32,7 @@ public class Main extends Application {
 	boolean showPriorLiving;
 	Button eStop;
 	FixOverFlows fix;
-	Timeline scheduled = new Timeline(new KeyFrame(Duration.seconds(Math.max((
-			(Math.pow(((double) GAME_SIZE.getInt() / 75), Math.E)) / 10), .05)), _ -> {
+	Timeline scheduled = new Timeline(new KeyFrame(Duration.seconds(GAME_SPEED.getDouble()), _ -> {
 		game.RunOneGen(showPriorLiving);
 		makeBoard(game.GetCurrentBoard());
 	}));
@@ -183,7 +182,12 @@ public class Main extends Application {
 			rightPane.getChildren().addAll(rightPaneRight, rightPaneLeft);
 			((Region) rightPaneLeft.getChildren().getFirst()).setPrefWidth(BUTTON_WIDTH.getInt());
 			// creating the grid.
-			int[][] initialGrid = new int[GAME_SIZE.getInt()][GAME_SIZE.getInt()];
+			GameInteger[][] initialGrid = new GameInteger[GAME_SIZE.getInt()][GAME_SIZE.getInt()];
+			for (int row = 0; row < GAME_SIZE.getInt(); row++){
+				for (int col = 0; col < GAME_SIZE.getInt(); col++){
+					initialGrid[row][col] = new GameInteger(DEAD_CELL.getInt());
+				}
+			}
 			makeBoard(initialGrid);
 			primaryStage.setScene(scene);
 			primaryStage.show();
@@ -216,8 +220,13 @@ public class Main extends Application {
 	 */
 	private void resetBoard(ActionEvent resetButtonPressed) {
 		eStopProcessor(null);
-		game.SetCurrentBoard(new int[GAME_SIZE.getInt()][GAME_SIZE.getInt()]);
-		int[][] temp = game.GetCurrentBoard();
+		GameInteger[][] temp = new GameInteger[GAME_SIZE.getInt()][GAME_SIZE.getInt()];
+		for (int row = 0; row < GAME_SIZE.getInt(); row++){
+			for (int col = 0; col < GAME_SIZE.getInt(); col++){
+				temp[row][col] = new GameInteger(DEAD_CELL.getInt());
+			}
+		}
+		game.SetCurrentBoard(temp);
 		makeBoard(temp);
 	}
 
@@ -225,7 +234,7 @@ public class Main extends Application {
 	 * @param randomBoardButton Generates a random board.
 	 */
 	private void generateRandomBoard(ActionEvent randomBoardButton) {
-		int[][] temp = game.GenerateBoard();
+		GameInteger[][] temp = game.GenerateBoard();
 		makeBoard(temp);
 	}
 
@@ -273,7 +282,7 @@ public class Main extends Application {
 	 * @param runButtonPressed runs as many game states as directed to.
 	 */
 	private void runCustomGenPlease(ActionEvent runButtonPressed) {
-		scheduled.setCycleCount(Integer.parseInt(customGenRuns.getText()));
+		scheduled.setCycleCount(GameInteger.parseInt(customGenRuns.getText()));
 		scheduled.play();
 		eStop.setOnAction(this::eStopProcessor);
 		eStop.setBackground(Background.fill(Color.CRIMSON));
@@ -298,27 +307,27 @@ public class Main extends Application {
 		Pane lifeCell = (Pane) click.getSource();
 		String cellLocation;
 		fix = new FixOverFlows();
-		int[][] currentVisible = game.GetCurrentBoard();
+		GameInteger[][] currentVisible = game.GetCurrentBoard();
 		cellLocation = lifeCell.getId();
 		Scanner scnr = new Scanner(cellLocation);
-		if (Integer.parseInt(brushSize.getText()) > GAME_SIZE.getInt()) {
+		if (GameInteger.parseInt(brushSize.getText()) > GAME_SIZE.getInt()) {
 			brushSize.setText("" + GAME_SIZE.getInt());
-		} else if (Integer.parseInt(brushSize.getText()) < 1) {
+		} else if (GameInteger.parseInt(brushSize.getText()) < 1) {
 			brushSize.setText("" + 1);
 		}
 		int x = scnr.nextInt();
 		int y = scnr.nextInt();
-		switch (currentVisible[x][y]) {
+		switch (currentVisible[x][y].getVALUE()) {
 			case 0://dead
-				for (int col = Integer.parseInt(brushSize.getText()); col > 0; col--) {
-					for (int row = Integer.parseInt(brushSize.getText()); row > 0; row--) {
+				for (int col = GameInteger.parseInt(brushSize.getText()); col > 0; col--) {
+					for (int row = GameInteger.parseInt(brushSize.getText()); row > 0; row--) {
 						scnr.close();
 						scnr = new Scanner(cellLocation);
 						currentVisible[fix.FixFlow(x +
-										(row - (int) Math.ceil((Integer.parseInt(brushSize.getText()) + .1) / 2.0)),
+										(row - (int) Math.ceil((GameInteger.parseInt(brushSize.getText()) + .1) / 2.0)),
 								GAME_SIZE.getInt())][fix.FixFlow(y +
-										(col - (int) Math.ceil((Integer.parseInt(brushSize.getText()) + .1) / 2.0)),
-								GAME_SIZE.getInt())] = LIVING_CELL.getInt();
+										(col - (int) Math.ceil((GameInteger.parseInt(brushSize.getText()) + .1) / 2.0)),
+								GAME_SIZE.getInt())] = new GameInteger(LIVING_CELL.getInt());
 					}
 
 					game.SetCurrentBoard(currentVisible);
@@ -326,15 +335,15 @@ public class Main extends Application {
 				}
 				break;
 			case 1://dying
-				for (int col = Integer.parseInt(brushSize.getText()); col > 0; col--) {
-					for (int row = Integer.parseInt(brushSize.getText()); row > 0; row--) {
+				for (int col = GameInteger.parseInt(brushSize.getText()); col > 0; col--) {
+					for (int row = GameInteger.parseInt(brushSize.getText()); row > 0; row--) {
 						scnr.close();
 						scnr = new Scanner(cellLocation);
 						currentVisible[fix.FixFlow(x +
-										(row - (int) Math.ceil((Integer.parseInt(brushSize.getText()) + .1) / 2.0)),
+										(row - (int) Math.ceil((GameInteger.parseInt(brushSize.getText()) + .1) / 2.0)),
 								GAME_SIZE.getInt())][fix.FixFlow(y +
-										(col - (int) Math.ceil((Integer.parseInt(brushSize.getText()) + .1) / 2.0)),
-								GAME_SIZE.getInt())] = DEAD_CELL.getInt();
+										(col - (int) Math.ceil((GameInteger.parseInt(brushSize.getText()) + .1) / 2.0)),
+								GAME_SIZE.getInt())] = new GameInteger(DEAD_CELL.getInt());
 					}
 
 					game.SetCurrentBoard(currentVisible);
@@ -342,15 +351,15 @@ public class Main extends Application {
 				}
 				break;
 			case 2: //living
-				for (int col = Integer.parseInt(brushSize.getText()); col > 0; col--) {
-					for (int row = Integer.parseInt(brushSize.getText()); row > 0; row--) {
+				for (int col = GameInteger.parseInt(brushSize.getText()); col > 0; col--) {
+					for (int row = GameInteger.parseInt(brushSize.getText()); row > 0; row--) {
 						scnr.close();
 						scnr = new Scanner(cellLocation);
 						currentVisible[fix.FixFlow(x +
-										(row - (int) Math.ceil((Integer.parseInt(brushSize.getText()) + .1) / 2.0)),
+										(row - (int) Math.ceil((GameInteger.parseInt(brushSize.getText()) + .1) / 2.0)),
 								GAME_SIZE.getInt())][fix.FixFlow(y +
-										(col - (int) Math.ceil((Integer.parseInt(brushSize.getText()) + .1) / 2.0)),
-								GAME_SIZE.getInt())] = DYING_CELL.getInt();
+										(col - (int) Math.ceil((GameInteger.parseInt(brushSize.getText()) + .1) / 2.0)),
+								GAME_SIZE.getInt())] = new GameInteger(DYING_CELL.getInt());
 					}
 
 					game.SetCurrentBoard(currentVisible);
@@ -364,7 +373,7 @@ public class Main extends Application {
 	/**
 	 * @param temporaryBoard creates the next board.
 	 */
-	private void makeBoard(int[][] temporaryBoard) {
+	private void makeBoard(GameInteger[][] temporaryBoard) {
 		leftPaneGrid = new GridPane();
 		leftPaneGrid.setBackground(Background.fill(DEAD_CELL.getColor()));
 		leftPaneGrid.setMinSize(PANE_WIDTH.getInt(), PANE_HEIGHT.getInt());
@@ -376,17 +385,16 @@ public class Main extends Application {
 			for (int i = 0; i < GAME_SIZE.getInt(); i++) {
 				// create and add panes
 				Pane lifeCell = new Pane();
-				//lifeCell.setSnapToPixel(false);
 				lifeCell.setMinHeight(((double) PANE_HEIGHT.getInt()) / GAME_SIZE.getInt());
 				lifeCell.setMinWidth(((double) PANE_HEIGHT.getInt()) / GAME_SIZE.getInt());
 				lifeCell.setId(i + " " + j);
-				if (temporaryBoard[i][j] == DEAD_CELL.getInt()) {
+				if (temporaryBoard[i][j].getVALUE() == DEAD_CELL.getInt()) {
 					lifeCell.setBackground(Background.fill(DEAD_CELL.getColor()));
 				}
-				if (temporaryBoard[i][j] == DYING_CELL.getInt()) {
+				if (temporaryBoard[i][j].getVALUE() == DYING_CELL.getInt()) {
 					lifeCell.setBackground(Background.fill(DYING_CELL.getColor()));
 				}
-				if (temporaryBoard[i][j] == LIVING_CELL.getInt()) {
+				if (temporaryBoard[i][j].getVALUE() == LIVING_CELL.getInt()) {
 					lifeCell.setBackground(Background.fill(LIVING_CELL.getColor()));
 				}
 				lifeCell.setBorder(new Border(new BorderStroke(Color.GRAY,

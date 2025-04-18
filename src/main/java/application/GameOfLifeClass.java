@@ -2,12 +2,11 @@ package application;
 
 import java.util.Random;
 
-import static application.FEnum.GAME_SIZE;
-import static application.FEnum.LIVING_CELL;
+import static application.FEnum.*;
 
 public class GameOfLifeClass {
 	private final FixOverFlows fix;
-	int[][] currentBoard;
+	GameInteger[][] currentBoard;
 	private Random rnd;
 
 	/**
@@ -17,7 +16,12 @@ public class GameOfLifeClass {
 	public GameOfLifeClass() {
 		super();
 		fix = new FixOverFlows();
-		currentBoard = new int[GAME_SIZE.getInt()][GAME_SIZE.getInt()];
+		currentBoard = new GameInteger[GAME_SIZE.getInt()][GAME_SIZE.getInt()];
+		for (int row = 0; row < GAME_SIZE.getInt(); row++){
+			for (int col = 0; col < GAME_SIZE.getInt(); col++){
+				currentBoard[row][col] = new GameInteger(DEAD_CELL.getInt());
+			}
+		}
 		rnd = new Random(75);/* temporary value for development purposes */
 	}
 
@@ -47,13 +51,14 @@ public class GameOfLifeClass {
 	/**
 	 * @return generates a new, random board
 	 */
-	public int[][] GenerateBoard() {
-		int[][] temp = new int[GAME_SIZE.getInt()][GAME_SIZE.getInt()];
+	public GameInteger[][] GenerateBoard() {
+		GameInteger[][] temp = new GameInteger[GAME_SIZE.getInt()][GAME_SIZE.getInt()];
+
 		for (int row = 0; row < GAME_SIZE.getInt(); row++) {
 			for (int col = 0; col < GAME_SIZE.getInt(); col++) {
 				int next = rnd.nextInt(LIVING_CELL.getInt());
 				if (next == 1) next++;
-				temp[row][col] = next;
+				temp[row][col] = new GameInteger(next);
 			}
 		}
 		currentBoard = temp;
@@ -63,14 +68,14 @@ public class GameOfLifeClass {
 	/**
 	 * @return returns the current game board
 	 */
-	public int[][] GetCurrentBoard() {
+	public GameInteger[][] GetCurrentBoard() {
 		return currentBoard;
 	}
 
 	/**
 	 * @param newBoard updates the game board.
 	 */
-	public void SetCurrentBoard(int[][] newBoard) {
+	public void SetCurrentBoard(GameInteger[][] newBoard) {
 		this.currentBoard = newBoard;
 	}
 
@@ -79,14 +84,10 @@ public class GameOfLifeClass {
 	 *                    boolean input.
 	 */
 	public void RunOneGen(boolean showDying) {
-		int[][] nextBoard = new int[GAME_SIZE.getInt()][GAME_SIZE.getInt()];
+		GameInteger[][] nextBoard = new GameInteger[GAME_SIZE.getInt()][GAME_SIZE.getInt()];
 		for (int i = 0; i < GAME_SIZE.getInt(); i++) {
 			for (int j = 0; j < GAME_SIZE.getInt(); j++) {
-				if (showDying) {
-					nextBoard[j][i] = FindNextDying(currentBoard[j][i], j, i);
-				} else {
-					nextBoard[j][i] = FindNextState(currentBoard[j][i], j, i);
-				}
+				nextBoard[j][i] = FindNext(currentBoard[j][i], j, i, showDying);
 			}
 		}
 		currentBoard = nextBoard;
@@ -99,37 +100,40 @@ public class GameOfLifeClass {
 	 * @return returns next cell state based on my ghost inclusive version of conway's game of life
 	 * rules.
 	 */
-	private int FindNextDying(int cellState, int x, int y) {
-		int numOfAdjacent = CheckNearCells(x, y);
-		if ((numOfAdjacent < 2 || numOfAdjacent > 3) && cellState != 0) {
-			return cellState - 1;
-		}
-		if (numOfAdjacent == 3) {
-			return LIVING_CELL.getInt();
-		}
-		if (numOfAdjacent == 2 && cellState == 1) {
-			return 0;
-		}
-		return cellState;
-	}
+	private GameInteger FindNext(GameInteger cellState, int x, int y, boolean showDying) {
+		GameInteger numOfAdjacent = CheckNearCells(x, y);
+		boolean shouldLive, shouldComeAlive;
+		shouldLive = false;
+		shouldComeAlive = false;
 
-	/**
-	 * @param cellState the current state of the current cell
-	 * @param x         the x position of the current cell.
-	 * @param y         * the y position of the current cell.
-	 * @return returns next cell state based on vanilla game of life rules.
-	 */
-	private int FindNextState(int cellState, int x, int y) {
-		int numOfAdjacent = CheckNearCells(x, y);
-		if (numOfAdjacent < 2 || numOfAdjacent > 3) {
-			return 0;
+		for (int rule : SURVIVAL_RULES.getIntArray()){
+			if (numOfAdjacent.getVALUE() == rule) {
+				shouldLive = true;
+				break;
+			}
 		}
-		if (numOfAdjacent == 3) {
-			return LIVING_CELL.getInt();
+
+		for (int rule : APPEARANCE_RULES.getIntArray()){
+			if (numOfAdjacent.getVALUE() == rule){
+				shouldComeAlive = true;
+				break;
+			}
 		}
-		if (cellState == 1) {
-			return 0;
+
+		if ((!shouldLive)) {
+			if (showDying && cellState.getVALUE() != 0)
+				return new GameInteger(cellState.getVALUE()-1);
+			return new GameInteger(DEAD_CELL.getInt());
 		}
+
+		if (shouldComeAlive) {
+			return new GameInteger(LIVING_CELL.getInt());
+		}
+
+		if (cellState.getVALUE() == DYING_CELL.getInt()) {
+			return new GameInteger(DEAD_CELL.getInt());
+		}
+
 		return cellState;
 	}
 
@@ -138,49 +142,21 @@ public class GameOfLifeClass {
 	 * @param y takes the current y position of a cell
 	 * @return returns the number of living cells surrounding the cell's grid location.
 	 */
-	private int CheckNearCells(int x, int y) {
+	private GameInteger CheckNearCells(int x, int y) {
+		int halfRange = SEARCH_RANGE.getInt()/2;
 		int count = 0;
-		if (currentBoard[fix.FixFlow(x - 1, GAME_SIZE.getInt())][fix.FixFlow(y - 1,
-				GAME_SIZE.getInt())] == LIVING_CELL.getInt())
-		{
-			count++;
+		for (int row = -halfRange; row < SEARCH_RANGE.getInt() - halfRange; row++) {
+			for (int col = -halfRange; col < SEARCH_RANGE.getInt() - halfRange; col++) {
+				boolean isAlive = (currentBoard[fix.FixFlow(x+row, GAME_SIZE.getInt())][fix.FixFlow(y+col,
+						GAME_SIZE.getInt())].getVALUE() == 2);
+				boolean isNotSelf = (!currentBoard[fix.FixFlow(x+row, GAME_SIZE.getInt())][fix.FixFlow(y+col,
+						GAME_SIZE.getInt())].equals(currentBoard[fix.FixFlow(x, GAME_SIZE.getInt())][fix.FixFlow(y,
+						GAME_SIZE.getInt())]));
+				if (isAlive && isNotSelf){
+					count++;
+				}
+			}
 		}
-		if (currentBoard[fix.FixFlow(x - 1, GAME_SIZE.getInt())][fix.FixFlow(y, GAME_SIZE.getInt())] ==
-				LIVING_CELL.getInt())
-		{
-			count++;
-		}
-		if (currentBoard[fix.FixFlow(x - 1, GAME_SIZE.getInt())][fix.FixFlow(y + 1,
-				GAME_SIZE.getInt())] == LIVING_CELL.getInt())
-		{
-			count++;
-		}
-		if (currentBoard[fix.FixFlow(x, GAME_SIZE.getInt())][fix.FixFlow(y - 1, GAME_SIZE.getInt())] ==
-				LIVING_CELL.getInt())
-		{
-			count++;
-		}
-		if (currentBoard[fix.FixFlow(x, GAME_SIZE.getInt())][fix.FixFlow(y + 1, GAME_SIZE.getInt())] ==
-				LIVING_CELL.getInt())
-		{
-			count++;
-		}
-		if (currentBoard[fix.FixFlow(x + 1, GAME_SIZE.getInt())][fix.FixFlow(y - 1,
-				GAME_SIZE.getInt())] == LIVING_CELL.getInt())
-		{
-			count++;
-		}
-		if (currentBoard[fix.FixFlow(x + 1, GAME_SIZE.getInt())][fix.FixFlow(y + 1,
-				GAME_SIZE.getInt())] == LIVING_CELL.getInt())
-		{
-			count++;
-		}
-		if (currentBoard[fix.FixFlow(x + 1, GAME_SIZE.getInt())][fix.FixFlow(y, GAME_SIZE.getInt())] ==
-				LIVING_CELL.getInt())
-		{
-			count++;
-		}
-		return count;
+		return new GameInteger(count);
 	}
-
 }
